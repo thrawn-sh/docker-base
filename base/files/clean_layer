@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -e
+set -o pipefail
+set -u
+
+THIS_PATH="$(readlink --canonicalize-existing "${0}")"
+THIS_NAME="$(basename "${THIS_PATH}")"
+THIS_DIR="$(dirname "${THIS_PATH}")"
+
+apt-get clean  --quiet
+find / -type f -name "*-"    -print0 | xargs --no-run-if-empty --null rm
+find / -type f -name "*-old" -print0 | xargs --no-run-if-empty --null rm
+find / -type f -name "*-new" -print0 | xargs --no-run-if-empty --null rm
+rm --force --recursive "/tmp/"*
+rm --force             "/var/cache/ldconfig/aux-cache"
+rm --force --recursive "/var/cache/man"
+rm --force             "/var/lib/apt/lists/"snapshot*
+rm --force             "/var/log/alternatives.log"
+rm --force --recursive "/var/log/apt"
+rm --force             "/var/log/bootstrap.log"
+rm --force             "/var/log/dpkg.log"
+rm --force --recursive "/var/tmp/"*
+mkdir --parents        "/var/log/apt"
+
+# disable password logins and password ageing
+sed --in-place 's/\([^:]\+\):.*/\1:*:::::::/g' /etc/shadow
