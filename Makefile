@@ -5,7 +5,7 @@ include Makefile.options
 
 build: .$(DISTRIBUTION)-$(SNAPSHOT).image
 
-.$(DISTRIBUTION)-$(SNAPSHOT).image: Dockerfile Makefile ../Makefile.options
+.$(DISTRIBUTION)-$(SNAPSHOT).image: Dockerfile Makefile Makefile.options
 	@echo [docker] shadowhunt/base
 	@docker build                                           \
 		--build-arg "DISTRIBUTION=$(DISTRIBUTION)"          \
