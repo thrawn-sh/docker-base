@@ -31,8 +31,10 @@ RUN rm --force --recursive "/rootfs" \
 
 # create first-stage debootstrap
 RUN debootstrap --foreign --variant="minbase" "${DISTRIBUTION}" "/rootfs" "https://snapshot.debian.org/archive/debian/${SNAPSHOT}"
-RUN rm --force --recursive /rootfs/dev/*  \
- && rm --force --recursive /rootfs/proc/*
+RUN rm --force --recursive /rootfs/dev \
+ && mkdir                  /rootfs/dev
+RUN rm --force --recursive /rootfs/proc \
+ && mkdir                  /rootfs/proc
 
 # disable unnecessary steps in second-stage
 RUN sed --in-place 's/^setup_devices () {$/setup_devices () { return 0;/' "/rootfs/debootstrap/functions" \
@@ -81,8 +83,10 @@ RUN rm --force --recursive "/rootfs" \
 
 # create first-stage debootstrap
 RUN debootstrap --foreign --variant="minbase" "${DISTRIBUTION}" "/rootfs" "https://snapshot.debian.org/archive/debian/${SNAPSHOT}"
-RUN rm --force --recursive /rootfs/dev/*  \
- && rm --force --recursive /rootfs/proc/*
+RUN rm --force --recursive /rootfs/dev \
+ && mkdir                  /rootfs/dev
+RUN rm --force --recursive /rootfs/proc \
+ && mkdir                  /rootfs/proc
 
 # disable unnecessary steps in second-stage
 RUN sed --in-place 's/^setup_devices () {$/setup_devices () { return 0;/' "/rootfs/debootstrap/functions" \
