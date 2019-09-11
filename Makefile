@@ -13,7 +13,6 @@ build: .$(DISTRIBUTION)-$(SNAPSHOT).image
 		--compress                                          \
 		--force-rm                                          \
 		--pull                                              \
-		--quiet                                             \
 		--tag "shadowhunt/base:$(DISTRIBUTION)-$(SNAPSHOT)" \
 		.
 	@docker push "shadowhunt/base:$(DISTRIBUTION)-$(SNAPSHOT)"
