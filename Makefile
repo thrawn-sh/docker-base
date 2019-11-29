@@ -3,9 +3,9 @@ MAKEFLAGS += --no-builtin-variables
 
 include Makefile.options
 
-build: .$(DISTRIBUTION)-$(SNAPSHOT).image
+build: .$(SNAPSHOT).image
 
-.$(DISTRIBUTION)-$(SNAPSHOT).image: Dockerfile Makefile Makefile.options
+.$(SNAPSHOT).image: Dockerfile Makefile Makefile.options
 	@echo [docker] shadowhunt/base
 	@docker build                           \
 		--build-arg "SNAPSHOT=$(SNAPSHOT)"  \
