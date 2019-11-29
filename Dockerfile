@@ -8,17 +8,15 @@
 #   (only first stage, because mount can not be run in docker during build)   #
 ###############################################################################
 
-ARG DISTRIBUTION
-FROM debian:${DISTRIBUTION} as bootstrap-0
+FROM debian:stable as bootstrap-0
 
-ARG DISTRIBUTION
 ARG SNAPSHOT
 
 # define general environment variables
-ENV DEBIAN_FRONTEND noninteractive
-ENV LANG            C.UTF-8
-ENV LANGUAGE        en
-ENV LC_ALL          C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive \
+    LANG            C.UTF-8        \
+    LANGUAGE        en             \
+    LC_ALL          C.UTF-8
 
 # install all required package to build
 RUN apt-get --quiet update        \
@@ -30,7 +28,7 @@ RUN rm --force --recursive "/rootfs" \
  && mkdir --parents        "/rootfs"
 
 # create first-stage debootstrap
-RUN debootstrap --foreign --variant="minbase" "${DISTRIBUTION}" "/rootfs" "https://snapshot.debian.org/archive/debian/${SNAPSHOT}"
+RUN debootstrap --foreign --variant="minbase" "stable" "/rootfs" "https://snapshot.debian.org/archive/debian/${SNAPSHOT}"
 RUN rm --force --recursive /rootfs/dev \
  && mkdir                  /rootfs/dev
 RUN rm --force --recursive /rootfs/proc \
@@ -52,14 +50,13 @@ RUN sed --in-place 's/^setup_devices () {$/setup_devices () { return 0;/' "/root
 
 FROM scratch as bootstrap-1
 
-ARG DISTRIBUTION
 ARG SNAPSHOT
 
 # define general environment variables
-ENV DEBIAN_FRONTEND noninteractive
-ENV LANG            C.UTF-8
-ENV LANGUAGE        en
-ENV LC_ALL          C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive \
+    LANG            C.UTF-8        \
+    LANGUAGE        en             \
+    LC_ALL          C.UTF-8
 
 # transfer first-stage
 COPY --from="bootstrap-0" "/rootfs" /
@@ -68,9 +65,9 @@ COPY --from="bootstrap-0" "/rootfs" /
 RUN /debootstrap/debootstrap --second-stage
 
 # pin sources.list to ${SNAPSHOT}
-RUN echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian/${SNAPSHOT}          ${DISTRIBUTION}         main contrib non-free"  > /etc/apt/sources.list \
- && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian/${SNAPSHOT}          ${DISTRIBUTION}-updates main contrib non-free" >> /etc/apt/sources.list \
- && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian-security/${SNAPSHOT} ${DISTRIBUTION}/updates main contrib non-free" >> /etc/apt/sources.list
+RUN echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian/${SNAPSHOT}          stable         main contrib non-free"  > /etc/apt/sources.list \
+ && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian/${SNAPSHOT}          stable-updates main contrib non-free" >> /etc/apt/sources.list \
+ && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian-security/${SNAPSHOT} stable/updates main contrib non-free" >> /etc/apt/sources.list
 
 # install all required package to build
 RUN apt-get --quiet update        \
@@ -82,7 +79,7 @@ RUN rm --force --recursive "/rootfs" \
  && mkdir --parents        "/rootfs"
 
 # create first-stage debootstrap
-RUN debootstrap --foreign --variant="minbase" "${DISTRIBUTION}" "/rootfs" "https://snapshot.debian.org/archive/debian/${SNAPSHOT}"
+RUN debootstrap --foreign --variant="minbase" "stable" "/rootfs" "https://snapshot.debian.org/archive/debian/${SNAPSHOT}"
 RUN rm --force --recursive /rootfs/dev \
  && mkdir                  /rootfs/dev
 RUN rm --force --recursive /rootfs/proc \
@@ -103,14 +100,13 @@ RUN sed --in-place 's/^setup_devices () {$/setup_devices () { return 0;/' "/root
 
 FROM scratch as bootstrap-2
 
-ARG DISTRIBUTION
 ARG SNAPSHOT
 
 # define general environment variables
-ENV DEBIAN_FRONTEND noninteractive
-ENV LANG            C.UTF-8
-ENV LANGUAGE        en
-ENV LC_ALL          C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive \
+    LANG            C.UTF-8        \
+    LANGUAGE        en             \
+    LC_ALL          C.UTF-8
 
 # transfer first-stage
 COPY --from="bootstrap-1" "/rootfs" /
@@ -119,9 +115,9 @@ COPY --from="bootstrap-1" "/rootfs" /
 RUN /debootstrap/debootstrap --second-stage
 
 # pin sources.list to ${SNAPSHOT}
-RUN echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian/${SNAPSHOT}          ${DISTRIBUTION}         main contrib non-free"  > /etc/apt/sources.list \
- && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian/${SNAPSHOT}          ${DISTRIBUTION}-updates main contrib non-free" >> /etc/apt/sources.list \
- && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian-security/${SNAPSHOT} ${DISTRIBUTION}/updates main contrib non-free" >> /etc/apt/sources.list
+RUN echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian/${SNAPSHOT}          stable         main contrib non-free"  > /etc/apt/sources.list \
+ && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian/${SNAPSHOT}          stable-updates main contrib non-free" >> /etc/apt/sources.list \
+ && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian-security/${SNAPSHOT} stable/updates main contrib non-free" >> /etc/apt/sources.list
 
 # own version of initctl, dpkg must not override
 RUN dpkg-divert --local --rename --add /sbin/initctl
@@ -219,10 +215,10 @@ FROM scratch as base
 LABEL maintainer="docker@shadowhunt.de"
 
 # define general environment variables
-ENV DEBIAN_FRONTEND noninteractive
-ENV LANG            C.UTF-8
-ENV LANGUAGE        en
-ENV LC_ALL          C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive \
+    LANG            C.UTF-8        \
+    LANGUAGE        en             \
+    LC_ALL          C.UTF-8
 
 # transfer first-stage
 COPY --from="bootstrap-2" "/rootfs" /

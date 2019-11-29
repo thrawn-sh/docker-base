@@ -1,3 +1,2 @@
 BUILD_DATE     = $(shell date --iso-8601=seconds --utc)
-DISTRIBUTION   = stable
-SNAPSHOT       = 20191101T171721Z
+SNAPSHOT       = 20191129T030053Z
