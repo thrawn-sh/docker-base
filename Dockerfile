@@ -13,10 +13,10 @@ FROM debian:stable as bootstrap-0
 ARG SNAPSHOT
 
 # define general environment variables
-ENV DEBIAN_FRONTEND noninteractive \
-    LANG            C.UTF-8        \
-    LANGUAGE        en             \
-    LC_ALL          C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive
+ENV LANG            C.UTF-8
+ENV LANGUAGE        en
+ENV LC_ALL          C.UTF-8
 
 # install all required package to build
 RUN apt-get --quiet update        \
@@ -53,10 +53,10 @@ FROM scratch as bootstrap-1
 ARG SNAPSHOT
 
 # define general environment variables
-ENV DEBIAN_FRONTEND noninteractive \
-    LANG            C.UTF-8        \
-    LANGUAGE        en             \
-    LC_ALL          C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive
+ENV LANG            C.UTF-8
+ENV LANGUAGE        en
+ENV LC_ALL          C.UTF-8
 
 # transfer first-stage
 COPY --from="bootstrap-0" "/rootfs" /
@@ -103,10 +103,10 @@ FROM scratch as bootstrap-2
 ARG SNAPSHOT
 
 # define general environment variables
-ENV DEBIAN_FRONTEND noninteractive \
-    LANG            C.UTF-8        \
-    LANGUAGE        en             \
-    LC_ALL          C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive
+ENV LANG            C.UTF-8
+ENV LANGUAGE        en
+ENV LC_ALL          C.UTF-8
 
 # transfer first-stage
 COPY --from="bootstrap-1" "/rootfs" /
@@ -163,7 +163,7 @@ RUN rm --force /etc/localtime                 \
  && echo "UTC" >               /etc/timezone
 
 # add cleanup script
-COPY files/clean_layer /bin/
+COPY files/clean_layer /usr/bin/
 
 # reinstall all packages to honor dpkg path exclusions
 RUN apt-get update --quiet                                                                                           \
@@ -178,6 +178,7 @@ RUN apt-mark auto   $(dpkg --get-selections                                     
 
 # cleanup image
 RUN rm --force --recursive /etc/apt/apt.conf.d/01autoremove-kernels \
+ && rm --force --recursive /etc/cron.daily                          \
  && rm --force             /etc/machine-id                          \
  && rm --force --recursive /usr/share/vim/vimrc                     \
  && rm --force --recursive /usr/share/vim/vimrc.tiny                \
@@ -187,16 +188,18 @@ RUN rm --force --recursive /etc/apt/apt.conf.d/01autoremove-kernels \
 VOLUME /final
 # remove mounted system files from final image (and copy back to a folder on
 # the image as followup steps and images will not be able to access the VOLUME)
-RUN cp --archive --one-file-system /      /final                  \
- && rm --force                            /final/etc/hostname     \
- && rm --force                            /final/etc/hosts        \
- && rm --force                            /final/etc/resolve.conf \
- && rm --force --recursive                /final/dev/*            \
- && rm --force --recursive                /final/final            \
- && rm --force --recursive                /final/proc/*           \
- && rm --force --recursive                /final/run/*            \
- && rm --force --recursive                /final/tmp/*            \
- && rm --force --recursive                /rootfs                 \
+RUN cp --archive --one-file-system /      /final                         \
+ && rm --force                            /final/etc/hostname            \
+ && rm --force                            /final/etc/hosts               \
+ && rm --force                            /final/etc/machine-id          \
+ && rm --force                            /final/etc/resolve.conf        \
+ && rm --force --recursive                /final/dev/*                   \
+ && rm --force --recursive                /final/final                   \
+ && rm --force --recursive                /final/proc/*                  \
+ && rm --force --recursive                /final/run/*                   \
+ && rm --force --recursive                /final/tmp/*                   \
+ && rm --force                            /final/var/lib/dbus/machine-id \
+ && rm --force --recursive                /rootfs                        \
  && cp --archive                   /final /rootfs
 
 # reset timestamps
@@ -215,10 +218,10 @@ FROM scratch as base
 LABEL maintainer="docker@shadowhunt.de"
 
 # define general environment variables
-ENV DEBIAN_FRONTEND noninteractive \
-    LANG            C.UTF-8        \
-    LANGUAGE        en             \
-    LC_ALL          C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive
+ENV LANG            C.UTF-8
+ENV LANGUAGE        en
+ENV LC_ALL          C.UTF-8
 
 # transfer first-stage
 COPY --from="bootstrap-2" "/rootfs" /
