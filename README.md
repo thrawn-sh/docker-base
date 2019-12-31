@@ -9,5 +9,5 @@ $> docker run --daemon                                                          
     --mount type=bind,source="/etc/timezone",destination="/etc/timezone",readonly   \
     --mount type=tmpfs,destination="/run"                                           \
     --mount type=tmpfs,destination="/tmp"                                           \
-    shadowhunt:base
+    shadowhunt/base
 ```
