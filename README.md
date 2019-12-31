@@ -3,7 +3,7 @@ Here are some example snippets to help you get started creating a container from
 
 ## docker
 ```sh
-$> docker run --daemon                                                              \
+$> docker run --detach                                                              \
     --read-only                                                                     \
     --mount type=bind,source="/etc/localtime",destination="/etc/localtime",readonly \
     --mount type=bind,source="/etc/timezone",destination="/etc/timezone",readonly   \
