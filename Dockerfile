@@ -234,4 +234,4 @@ VOLUME /tmp
 # pid files for services (--mount type=tmpfs,destination=/run)
 VOLUME /run
 
-CMD [ "/bin/sh" ]
+ENTRYPOINT [ "/bin/bash" ]
