@@ -215,7 +215,10 @@ RUN find /rootfs -depth -mount -exec touch --date="1970-01-01 00:00:00" --no-der
 
 FROM scratch as base
 
+ARG SNAPSHOT
+
 LABEL maintainer="docker@shadowhunt.de"
+LABEL debian-snapshot="${SNAPSHOT}"
 
 # define general environment variables
 ENV DEBIAN_FRONTEND noninteractive
