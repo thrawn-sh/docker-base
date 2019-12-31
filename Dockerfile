@@ -58,7 +58,7 @@ ENV LANG            C.UTF-8
 ENV LANGUAGE        en
 ENV LC_ALL          C.UTF-8
 
-# transfer first-stage
+# transfer bootstrap-0
 COPY --from="bootstrap-0" "/rootfs" /
 
 # complete second-stage debootstrap
@@ -108,7 +108,7 @@ ENV LANG            C.UTF-8
 ENV LANGUAGE        en
 ENV LC_ALL          C.UTF-8
 
-# transfer first-stage
+# transfer bootstrap-1
 COPY --from="bootstrap-1" "/rootfs" /
 
 # complete second-stage debootstrap
@@ -226,7 +226,7 @@ ENV LANG            C.UTF-8
 ENV LANGUAGE        en
 ENV LC_ALL          C.UTF-8
 
-# transfer first-stage
+# transfer bootstrap-2
 COPY --from="bootstrap-2" "/rootfs" /
 
 # temporary files (--mount type=tmpfs,destination=/tmp)
