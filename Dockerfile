@@ -157,11 +157,6 @@ RUN rm --force  var/cache/apt/pkgcache.bin                     \
  && echo "    pkgcache    "";" >> etc/apt/apt.conf.d/02nocache \
  && echo "}"                   >> etc/apt/apt.conf.d/02nocache
 
-# set timezone to UTC
-RUN rm --force /etc/localtime                 \
- && cp /usr/share/zoneinfo/UCT /etc/localtime \
- && echo "UTC" >               /etc/timezone
-
 # add cleanup script
 COPY files/clean_layer /usr/bin/
 
@@ -175,6 +170,11 @@ RUN apt-mark auto   $(dpkg --get-selections                                     
  && apt-mark manual $(dpkg-query --show --showformat='${Package} ${Priority}\n'  | grep 'required$' | awk '{print $1}' | tr '\n' ' ') \
  && apt-mark manual apt-transport-https locales whiptail                                                                              \
  && apt-get --assume-yes --quiet autoremove
+
+# set timezone to UTC
+RUN rm --force /etc/localtime                 \
+ && cp /usr/share/zoneinfo/UCT /etc/localtime \
+ && echo "UTC" >               /etc/timezone
 
 # cleanup image
 RUN rm --force --recursive /etc/apt/apt.conf.d/01autoremove-kernels \
