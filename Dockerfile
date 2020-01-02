@@ -220,8 +220,8 @@ FROM scratch as base
 
 ARG SNAPSHOT
 
-LABEL maintainer="docker@shadowhunt.de"
 LABEL debian-snapshot="${SNAPSHOT}"
+LABEL maintainer="docker@shadowhunt.de"
 
 # define general environment variables
 ENV DEBIAN_FRONTEND noninteractive
