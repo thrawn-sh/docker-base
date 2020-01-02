@@ -157,6 +157,9 @@ RUN rm --force  var/cache/apt/pkgcache.bin                     \
  && echo "    pkgcache    "";" >> etc/apt/apt.conf.d/02nocache \
  && echo "}"                   >> etc/apt/apt.conf.d/02nocache
 
+# do not install recommended packages by default
+RUN echo 'APT::Install-Recommends "false";' > etc/apt/apt.conf.d/02norecommends
+
 # add cleanup script
 COPY files/clean_layer /usr/bin/
 
