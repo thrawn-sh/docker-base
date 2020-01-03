@@ -161,7 +161,7 @@ RUN rm --force  var/cache/apt/pkgcache.bin                     \
 RUN echo 'APT::Install-Recommends "false";' > etc/apt/apt.conf.d/02norecommends
 
 # add cleanup script
-COPY files/clean_layer /usr/bin/
+COPY root /
 
 # reinstall all packages to honor dpkg path exclusions
 RUN apt-get update --quiet                                                                                           \

@@ -1,11 +1,13 @@
 MAKEFLAGS += --no-builtin-rules
 MAKEFLAGS += --no-builtin-variables
 
+FILES     := $(shell find root -type f)A
+
 include Makefile.options
 
 build: .$(SNAPSHOT).image
 
-.$(SNAPSHOT).image: Dockerfile Makefile Makefile.options
+.$(SNAPSHOT).image: Dockerfile Makefile Makefile.options $(FILES)
 	@echo [docker] shadowhunt/base
 	@docker build                           \
 		--build-arg "SNAPSHOT=$(SNAPSHOT)"  \
