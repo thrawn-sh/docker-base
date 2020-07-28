@@ -223,17 +223,16 @@ ARG COMMIT_HASH
 ARG SNAPSHOT
 
 # Build-time metadata as defined at https://label-schema.org
-LABEL org.label-schema.build-date="${BUILD_DATE}"                   \
-      org.label-schema.name="Debian base image"                     \
+LABEL maintainer="docker@shadowhunt.de"                             \
+      org.label-schema.build-date="${BUILD_DATE}"                   \
       org.label-schema.description="Image created with ${SNAPSHOT}" \
+      org.label-schema.name="Debian base image"                     \
+      org.label-schema.schema-version="1.0"                         \
       org.label-schema.url="https://www.debian.org"                 \
-      org.label-schema.vcs-url="${REPOSITORY_URL}"                  \
       org.label-schema.vcs-ref="${COMMIT_HASH}"                     \
+      org.label-schema.vcs-url="${REPOSITORY_URL}"                  \
       org.label-schema.vendor="shadowhunt"                          \
-      org.label-schema.version="${SNAPSHOT}"                        \
-      org.label-schema.schema-version="1.0"
-
-LABEL maintainer="docker@shadowhunt.de"
+      org.label-schema.version="${SNAPSHOT}"
 
 # define general environment variables
 ENV DEBIAN_FRONTEND="noninteractive" \
