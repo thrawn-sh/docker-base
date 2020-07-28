@@ -13,10 +13,10 @@ FROM debian:stable as bootstrap-0
 ARG SNAPSHOT
 
 # define general environment variables
-ENV DEBIAN_FRONTEND noninteractive
-ENV LANG            C.UTF-8
-ENV LANGUAGE        en
-ENV LC_ALL          C.UTF-8
+ENV DEBIAN_FRONTEND="noninteractive" \
+    LANG="C.UTF-8"                   \
+    LANGUAGE="en"                    \
+    LC_ALL="C.UTF-8"
 
 # install all required package to build
 RUN apt-get --quiet update        \
@@ -53,10 +53,10 @@ FROM scratch as bootstrap-1
 ARG SNAPSHOT
 
 # define general environment variables
-ENV DEBIAN_FRONTEND noninteractive
-ENV LANG            C.UTF-8
-ENV LANGUAGE        en
-ENV LC_ALL          C.UTF-8
+ENV DEBIAN_FRONTEND="noninteractive" \
+    LANG="C.UTF-8"                   \
+    LANGUAGE="en"                    \
+    LC_ALL="C.UTF-8"
 
 # transfer bootstrap-0
 COPY --from="bootstrap-0" "/rootfs" /
@@ -103,10 +103,10 @@ FROM scratch as bootstrap-2
 ARG SNAPSHOT
 
 # define general environment variables
-ENV DEBIAN_FRONTEND noninteractive
-ENV LANG            C.UTF-8
-ENV LANGUAGE        en
-ENV LC_ALL          C.UTF-8
+ENV DEBIAN_FRONTEND="noninteractive" \
+    LANG="C.UTF-8"                   \
+    LANGUAGE="en"                    \
+    LC_ALL="C.UTF-8"
 
 # transfer bootstrap-1
 COPY --from="bootstrap-1" "/rootfs" /
@@ -218,16 +218,28 @@ RUN find /rootfs -depth -mount -exec touch --date="1970-01-01 00:00:00" --no-der
 
 FROM scratch as base
 
+ARG BUILD_DATE
+ARG COMMIT_HASH
 ARG SNAPSHOT
 
-LABEL debian-snapshot="${SNAPSHOT}"
+# Build-time metadata as defined at https://label-schema.org
+LABEL org.label-schema.build-date="${BUILD_DATE}"                   \
+      org.label-schema.name="Debian base image"                     \
+      org.label-schema.description="Image created with ${SNAPSHOT}" \
+      org.label-schema.url="https://www.debian.org"                 \
+      org.label-schema.vcs-url="${REPOSITORY_URL}"                  \
+      org.label-schema.vcs-ref="${COMMIT_HASH}"                     \
+      org.label-schema.vendor="shadowhunt"                          \
+      org.label-schema.version="${SNAPSHOT}"                        \
+      org.label-schema.schema-version="1.0"
+
 LABEL maintainer="docker@shadowhunt.de"
 
 # define general environment variables
-ENV DEBIAN_FRONTEND noninteractive
-ENV LANG            C.UTF-8
-ENV LANGUAGE        en
-ENV LC_ALL          C.UTF-8
+ENV DEBIAN_FRONTEND="noninteractive" \
+    LANG="C.UTF-8"                   \
+    LANGUAGE="en"                    \
+    LC_ALL="C.UTF-8"
 
 # transfer bootstrap-2
 COPY --from="bootstrap-2" "/rootfs" /

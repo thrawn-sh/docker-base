@@ -19,6 +19,7 @@ push: build
 .$(SNAPSHOT).image: Dockerfile Makefile Makefile.options $(FILES)
 	@echo "[build] shadowhunt/$(IMAGE):$(SNAPSHOT)"
 	@docker build                               \
+		--build-arg "BUILD_DATE=$(BUILD_DATE)"  \
 		--build-arg "SNAPSHOT=$(SNAPSHOT)"      \
 		--compress                              \
 		--force-rm                              \
