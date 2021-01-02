@@ -220,7 +220,7 @@ FROM scratch as base
 
 ARG BUILD_DATE
 ARG COMMIT_HASH
-ARG REPOSITORY_URL
+ARG PROJET_URL
 ARG SNAPSHOT
 
 # Build-time metadata as defined at https://label-schema.org
@@ -231,7 +231,7 @@ LABEL maintainer="docker@shadowhunt.de"                             \
       org.label-schema.schema-version="1.0"                         \
       org.label-schema.url="https://www.debian.org"                 \
       org.label-schema.vcs-ref="${COMMIT_HASH}"                     \
-      org.label-schema.vcs-url="${REPOSITORY_URL}"                  \
+      org.label-schema.vcs-url="${PROJET_URL}"                      \
       org.label-schema.vendor="shadowhunt"                          \
       org.label-schema.version="${SNAPSHOT}"
 
