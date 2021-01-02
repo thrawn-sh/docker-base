@@ -187,11 +187,11 @@ RUN rm --force --recursive /etc/apt/apt.conf.d/01autoremove-kernels \
  && rm --force --recursive /usr/share/vim/vimrc.tiny                \
  && clean_layer
 
-# create temprary volume for cp (--one-file-system does exclude volume => no error while copying /)
-VOLUME /final
 # remove mounted system files from final image (and copy back to a folder on
 # the image as followup steps and images will not be able to access the VOLUME)
-RUN cp --archive --one-file-system /      /final                         \
+RUN mkdir                                 /final                         \
+ && cp --archive --one-file-system /      /final                         \
+ || true                                                                 \
  && rm --force                            /final/etc/hostname            \
  && rm --force                            /final/etc/hosts               \
  && rm --force                            /final/etc/machine-id          \
@@ -220,6 +220,7 @@ FROM scratch as base
 
 ARG BUILD_DATE
 ARG COMMIT_HASH
+ARG REPOSITORY_URL
 ARG SNAPSHOT
 
 # Build-time metadata as defined at https://label-schema.org
