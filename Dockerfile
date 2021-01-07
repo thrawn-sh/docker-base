@@ -8,7 +8,7 @@
 #   (only first stage, because mount can not be run in docker during build)   #
 ###############################################################################
 
-FROM debian:stable as bootstrap-0
+FROM docker.io/debian:stable as bootstrap-0
 
 ARG SNAPSHOT
 
@@ -187,23 +187,22 @@ RUN rm --force --recursive /etc/apt/apt.conf.d/01autoremove-kernels \
  && rm --force --recursive /usr/share/vim/vimrc.tiny                \
  && clean_layer
 
-# remove mounted system files from final image (and copy back to a folder on
-# the image as followup steps and images will not be able to access the VOLUME)
-RUN mkdir                                 /final                         \
- && cp --archive --one-file-system /      /final                         \
- || true                                                                 \
- && rm --force                            /final/etc/hostname            \
- && rm --force                            /final/etc/hosts               \
- && rm --force                            /final/etc/machine-id          \
- && rm --force                            /final/etc/resolve.conf        \
- && rm --force --recursive                /final/dev/*                   \
- && rm --force --recursive                /final/final                   \
- && rm --force --recursive                /final/proc/*                  \
- && rm --force --recursive                /final/run/*                   \
- && rm --force --recursive                /final/tmp/*                   \
- && rm --force                            /final/var/lib/dbus/machine-id \
- && rm --force --recursive                /rootfs                        \
- && cp --archive                   /final /rootfs
+RUN rm --force --recursive                /rootfs \
+ && mkdir --parents                       /rootfs
+
+# remove mounted system files from final image
+RUN [ "/bin/bash",  "-lc", "shopt -s extglob; eval 'cp --archive /!(dev|proc|rootfs|run|sys|tmp) /rootfs'" ]
+
+RUN rm --force                            /rootfs/etc/hostname               \
+ && rm --force                            /rootfs/etc/hosts                  \
+ && rm --force                            /rootfs/etc/machine-id             \
+ && rm --force                            /rootfs/etc/resolve.conf           \
+ && mkdir --parents                       /rootfs/dev                        \
+ && mkdir --parents                       /rootfs/proc                       \
+ && mkdir --parents                       /rootfs/run                        \
+ && mkdir --parents                       /rootfs/sys                        \
+ && mkdir --parents                       /rootfs/tmp                        \
+ && rm --force                            /rootfs/var/lib/dbus/machine-id
 
 # reset timestamps
 RUN find /rootfs -depth -mount -exec touch --date="1970-01-01 00:00:00" --no-dereference \{\} \;
