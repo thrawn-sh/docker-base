@@ -193,16 +193,18 @@ RUN rm --force --recursive                /rootfs \
 # remove mounted system files from final image
 RUN [ "/bin/bash",  "-lc", "shopt -s extglob; eval 'cp --archive /!(dev|proc|rootfs|run|sys|tmp) /rootfs'" ]
 
-RUN rm --force                            /rootfs/etc/hostname               \
- && rm --force                            /rootfs/etc/hosts                  \
- && rm --force                            /rootfs/etc/machine-id             \
- && rm --force                            /rootfs/etc/resolve.conf           \
- && mkdir --parents                       /rootfs/dev                        \
- && mkdir --parents                       /rootfs/proc                       \
- && mkdir --parents                       /rootfs/run                        \
- && mkdir --parents                       /rootfs/sys                        \
- && mkdir --parents                       /rootfs/tmp                        \
- && rm --force                            /rootfs/var/lib/dbus/machine-id
+# generate consistent machine-id
+RUN echo "${SNAPSHOT}" | md5sum | cut --delimiter=' ' --fields=1 > /rootfs/etc/machine-id          \
+ && echo "${SNAPSHOT}" | md5sum | cut --delimiter=' ' --fields=1 > /rootfs/var/lib/dbus/machine-id
+
+RUN rm --force                            /rootfs/etc/hostname     \
+ && rm --force                            /rootfs/etc/hosts        \
+ && rm --force                            /rootfs/etc/resolve.conf \
+ && mkdir --parents                       /rootfs/dev              \
+ && mkdir --parents                       /rootfs/proc             \
+ && mkdir --parents                       /rootfs/run              \
+ && mkdir --parents                       /rootfs/sys              \
+ && mkdir --parents                       /rootfs/tmp
 
 # reset timestamps
 RUN find /rootfs -depth -mount -exec touch --date="1970-01-01 00:00:00" --no-dereference \{\} \;
