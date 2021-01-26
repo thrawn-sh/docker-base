@@ -208,7 +208,7 @@ RUN rm --force                            /rootfs/etc/hostname     \
  && mkdir --parents                       /rootfs/tmp
 
 # reset timestamps
-RUN find /rootfs -depth -mount -exec touch --date="1970-01-01 00:00:00" --no-dereference \{\} \;
+RUN find /rootfs -depth -mount -exec touch --date="`echo "${SNAPSHOT}" | awk -v FS="" '{ print $1$2$3$4"-"$5$6"-"$7$8"T"$10$11":"$12$13":"$14$15"Z" }'`" --no-dereference \{\} \;
 
 ###############################################################################
 ###                                                                         ###
