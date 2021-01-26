@@ -195,6 +195,7 @@ RUN [ "/bin/bash",  "-lc", "shopt -s extglob; eval 'cp --archive /!(dev|proc|roo
 
 # generate consistent machine-id
 RUN echo "${SNAPSHOT}" | md5sum | cut --delimiter=' ' --fields=1 > /rootfs/etc/machine-id          \
+ && mkdir --parents                                                /rootfs/var/lib/dbus            \
  && echo "${SNAPSHOT}" | md5sum | cut --delimiter=' ' --fields=1 > /rootfs/var/lib/dbus/machine-id
 
 RUN rm --force                            /rootfs/etc/hostname     \
