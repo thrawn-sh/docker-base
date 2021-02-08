@@ -19,8 +19,8 @@ ENV DEBIAN_FRONTEND="noninteractive" \
     LC_ALL="C.UTF-8"
 
 # install all required package to build
-RUN apt-get --quiet update        \
- && apt-get --quiet --yes install \
+RUN apt-get --quiet=2 update        \
+ && apt-get --quiet=2 --yes install \
         debootstrap
 
 # create clean debbootstrap folder
@@ -70,8 +70,8 @@ RUN echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/arc
  && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian-security/${SNAPSHOT} stable/updates main contrib non-free" >> /etc/apt/sources.list
 
 # install all required package to build
-RUN apt-get --quiet update        \
- && apt-get --quiet --yes install \
+RUN apt-get --quiet=2 update        \
+ && apt-get --quiet=2 --yes install \
         debootstrap
 
 # create clean debbootstrap folder
@@ -164,15 +164,15 @@ RUN echo 'APT::Install-Recommends "false";' > etc/apt/apt.conf.d/02norecommends
 COPY root /
 
 # reinstall all packages to honor dpkg path exclusions
-RUN apt-get update --quiet                                                                                           \
- && apt-get --quiet --reinstall install $(dpkg --get-selections | grep 'install$'  | awk '{print $1}' | tr '\n' ' ')
+RUN apt-get update --quiet=2                                                                                           \
+ && apt-get --quiet=2 --reinstall install $(dpkg --get-selections | grep 'install$'  | awk '{print $1}' | tr '\n' ' ')
 
 # only keep minimal package list
 RUN apt-mark auto   $(dpkg --get-selections                                      | grep 'install$'  | awk '{print $1}' | tr '\n' ' ') \
  && apt-mark manual $(dpkg-query --show --showformat='${Package} ${Essential}\n' | grep 'yes$'      | awk '{print $1}' | tr '\n' ' ') \
  && apt-mark manual $(dpkg-query --show --showformat='${Package} ${Priority}\n'  | grep 'required$' | awk '{print $1}' | tr '\n' ' ') \
  && apt-mark manual apt-transport-https locales whiptail                                                                              \
- && apt-get --assume-yes --quiet autoremove
+ && apt-get --assume-yes --quiet=2 autoremove
 
 # set timezone to UTC
 RUN rm --force /etc/localtime                 \
