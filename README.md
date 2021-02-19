@@ -3,13 +3,15 @@ Here are some example snippets to help you get started creating a container from
 
 ## docker
 ```sh
-$> docker run --detach                                                              \
+$> docker run                                                                       \
+    --interactive=true                                                              \
     --mount type=bind,source="/etc/localtime",destination="/etc/localtime",readonly \
     --mount type=bind,source="/etc/timezone",destination="/etc/timezone",readonly   \
     --mount type=tmpfs,destination="/run"                                           \
     --mount type=tmpfs,destination="/tmp"                                           \
     --read-only                                                                     \
     --rm                                                                            \
+    --tty=true                                                                      \
     shadowhunt/base
 ```
 
