@@ -8,8 +8,6 @@ $> docker run --detach                                                          
     --mount type=bind,source="/etc/timezone",destination="/etc/timezone",readonly   \
     --mount type=tmpfs,destination="/run"                                           \
     --mount type=tmpfs,destination="/tmp"                                           \
-    --mount type=volume,destination="/backup"                                       \
-    --mount type=volume,destination="/config",readonly                              \
     --read-only                                                                     \
     --rm                                                                            \
     shadowhunt/base
