@@ -160,9 +160,6 @@ RUN rm --force  var/cache/apt/pkgcache.bin                     \
 # do not install recommended packages by default
 RUN echo 'APT::Install-Recommends "false";' > etc/apt/apt.conf.d/02norecommends
 
-# add cleanup script
-COPY root /
-
 # reinstall all packages to honor dpkg path exclusions
 RUN apt-get update --quiet=2                                                                                           \
  && apt-get --quiet=2 --reinstall install $(dpkg --get-selections | grep 'install$'  | awk '{print $1}' | tr '\n' ' ')
@@ -178,6 +175,9 @@ RUN apt-mark auto   $(dpkg --get-selections                                     
 RUN rm --force /etc/localtime                 \
  && cp /usr/share/zoneinfo/UCT /etc/localtime \
  && echo "UTC" >               /etc/timezone
+
+# add cleanup script
+COPY root /
 
 # cleanup image
 RUN rm --force --recursive /etc/apt/apt.conf.d/01autoremove-kernels \
@@ -205,7 +205,8 @@ RUN rm --force                            /rootfs/etc/hostname     \
  && mkdir --parents                       /rootfs/proc             \
  && mkdir --parents                       /rootfs/run              \
  && mkdir --parents                       /rootfs/sys              \
- && mkdir --parents                       /rootfs/tmp
+ && mkdir --parents                       /rootfs/tmp              \
+ && chmod 1777 /rootfs/tmp
 
 # reset timestamps
 RUN find /rootfs -depth -mount -exec touch --date="`echo "${SNAPSHOT}" | awk -v FS="" '{ print $1$2$3$4"-"$5$6"-"$7$8"T"$10$11":"$12$13":"$14$15"Z" }'`" --no-dereference \{\} \;
