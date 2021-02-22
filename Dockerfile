@@ -198,15 +198,15 @@ RUN echo "${SNAPSHOT}" | md5sum | cut --delimiter=' ' --fields=1 > /rootfs/etc/m
  && mkdir --parents                                                /rootfs/var/lib/dbus            \
  && echo "${SNAPSHOT}" | md5sum | cut --delimiter=' ' --fields=1 > /rootfs/var/lib/dbus/machine-id
 
-RUN rm --force                            /rootfs/etc/hostname     \
- && rm --force                            /rootfs/etc/hosts        \
- && rm --force                            /rootfs/etc/resolve.conf \
- && mkdir --parents                       /rootfs/dev              \
- && mkdir --parents                       /rootfs/proc             \
- && mkdir --parents                       /rootfs/run              \
- && mkdir --parents                       /rootfs/sys              \
- && mkdir --parents                       /rootfs/tmp              \
- && chmod 1777 /rootfs/tmp
+RUN rm --force      /rootfs/etc/hostname     \
+ && rm --force      /rootfs/etc/hosts        \
+ && rm --force      /rootfs/etc/resolve.conf \
+ && mkdir --parents /rootfs/dev              \
+ && mkdir --parents /rootfs/proc             \
+ && mkdir --parents /rootfs/run              \
+ && mkdir --parents /rootfs/sys              \
+ && mkdir --parents /rootfs/tmp              \
+ && chmod 1777      /rootfs/tmp
 
 # reset timestamps
 RUN find /rootfs -depth -mount -exec touch --date="`echo "${SNAPSHOT}" | awk -v FS="" '{ print $1$2$3$4"-"$5$6"-"$7$8"T"$10$11":"$12$13":"$14$15"Z" }'`" --no-dereference \{\} \;
