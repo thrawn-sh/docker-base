@@ -9,6 +9,9 @@ $> docker run                                                                   
     --mount type=bind,source="/etc/timezone",destination="/etc/timezone",readonly   \
     --mount type=tmpfs,destination="/run"                                           \
     --mount type=tmpfs,destination="/tmp"                                           \
+    --mount type=volume,destination="/backup"                                       \
+    --mount type=volume,destination="/config"                                       \
+    --mount type=volume,destination="/data"                                         \
     --read-only                                                                     \
     --rm                                                                            \
     --tty=true                                                                      \
