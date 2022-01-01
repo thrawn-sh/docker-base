@@ -1,6 +1,6 @@
 ---
 variables:
-  KANIKO_BUILD_ARGS: "--build-arg SNAPSHOT=20191129T030053Z  --destination docker.io/shadowhunt/base:20191129T030053Z --destination docker.io/shadowhunt/base:latest"
+  KANIKO_BUILD_ARGS: "--build-arg SNAPSHOT=20220101T084122Z  --destination docker.io/shadowhunt/base:20220101T084122Z --destination docker.io/shadowhunt/base:latest"
   
 include:
     - remote: 'https://gitlab.shadowhunt.de/open-source/pipeline-templates/-/raw/master/environment/gitlab-ci-template.yml'
