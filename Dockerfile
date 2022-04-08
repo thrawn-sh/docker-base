@@ -7,8 +7,11 @@
 # - debootstrap the *desired* image with *arbitrary* debootstrap version      #
 ###############################################################################
 
-FROM docker.io/debian:stable as bootstrap-0
+ARG RELEASE
 
+FROM docker.io/debian:${RELEASE} as bootstrap-0
+
+ARG RELEASE
 ARG SNAPSHOT
 
 # define general environment variables
@@ -27,7 +30,7 @@ RUN rm --force --recursive "/rootfs-0" \
  && mkdir --parents        "/rootfs-0"
 
 # create first-stage debootstrap
-RUN debootstrap --foreign --variant="minbase" "stable" "/rootfs-0" "https://snapshot.debian.org/archive/debian/${SNAPSHOT}"
+RUN debootstrap --foreign --variant="minbase" "${RELEASE}" "/rootfs-0" "https://snapshot.debian.org/archive/debian/${SNAPSHOT}"
 
 RUN rm --force --recursive /rootfs-0/dev \
  && mkdir                  /rootfs-0/dev
@@ -51,6 +54,7 @@ RUN chroot /rootfs-0 /debootstrap/debootstrap --second-stage
 
 FROM scratch as bootstrap-1
 
+ARG RELEASE
 ARG SNAPSHOT
 
 # define general environment variables
@@ -63,13 +67,13 @@ ENV DEBIAN_FRONTEND="noninteractive" \
 COPY --from="bootstrap-0" "/rootfs-0" /
 
 # pin sources.list to ${SNAPSHOT}
-RUN echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian/${SNAPSHOT}          stable         main contrib non-free"  > /etc/apt/sources.list \
- && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian/${SNAPSHOT}          stable-updates main contrib non-free" >> /etc/apt/sources.list \
- && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian-security/${SNAPSHOT} stable/updates main contrib non-free" >> /etc/apt/sources.list
+RUN echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian/${SNAPSHOT}          ${RELEASE}          main contrib non-free"  > /etc/apt/sources.list \
+ && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian/${SNAPSHOT}          ${RELEASE}-updates  main contrib non-free" >> /etc/apt/sources.list \
+ && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian-security/${SNAPSHOT} ${RELEASE}-security main contrib non-free" >> /etc/apt/sources.list
 
 # install all required package to build
-RUN apt-get --quiet=2 update        \
- && apt-get --quiet=2 --yes install \
+RUN apt-get --quiet=2 update                               \
+ && apt-get --quiet=2 --yes install -o=Dpkg::Use-Pty=false \
         debootstrap
 
 # create clean debbootstrap folder
@@ -77,7 +81,7 @@ RUN rm --force --recursive "/rootfs-1" \
  && mkdir --parents        "/rootfs-1"
 
 # create first-stage debootstrap
-RUN debootstrap --foreign --variant="minbase" "stable" "/rootfs-1" "https://snapshot.debian.org/archive/debian/${SNAPSHOT}"
+RUN debootstrap --foreign --variant="minbase" "${RELEASE}" "/rootfs-1" "https://snapshot.debian.org/archive/debian/${SNAPSHOT}"
 RUN rm --force --recursive /rootfs-1/dev \
  && mkdir                  /rootfs-1/dev
 RUN rm --force --recursive /rootfs-1/proc \
@@ -100,6 +104,7 @@ RUN chroot /rootfs-1 /debootstrap/debootstrap --second-stage
 
 FROM scratch as bootstrap-2
 
+ARG RELEASE
 ARG SNAPSHOT
 
 # define general environment variables
@@ -113,9 +118,9 @@ COPY --from="bootstrap-1" "/rootfs-1" /
 COPY --from="bootstrap-1" "/rootfs-1" "/rootfs-2"
 
 # pin sources.list to ${SNAPSHOT}
-RUN echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian/${SNAPSHOT}          stable         main contrib non-free"  > /rootfs-2/etc/apt/sources.list \
- && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian/${SNAPSHOT}          stable-updates main contrib non-free" >> /rootfs-2/etc/apt/sources.list \
- && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian-security/${SNAPSHOT} stable/updates main contrib non-free" >> /rootfs-2/etc/apt/sources.list
+RUN echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian/${SNAPSHOT}          ${RELEASE}          main contrib non-free"  > /rootfs-2/etc/apt/sources.list \
+ && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian/${SNAPSHOT}          ${RELEASE}-updates  main contrib non-free" >> /rootfs-2/etc/apt/sources.list \
+ && echo "deb [arch=amd64, check-valid-until=no] https://snapshot.debian.org/archive/debian-security/${SNAPSHOT} ${RELEASE}-security main contrib non-free" >> /rootfs-2/etc/apt/sources.list
 
 # own version of initctl, dpkg must not override
 RUN chroot /rootfs-2 dpkg-divert --local --rename --add /sbin/initctl
@@ -211,6 +216,7 @@ FROM scratch as base
 ARG BUILD_DATE
 ARG COMMIT_HASH
 ARG PROJET_URL
+ARG RELEASE
 ARG SNAPSHOT
 
 # Build-time metadata as defined at https://label-schema.org
