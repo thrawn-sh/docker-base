@@ -1,3 +1,4 @@
 BUILD_DATE = $(shell date --iso-8601=seconds --utc)
 IMAGE      = "base"
+RELEASE    = "bullseye"
 SNAPSHOT   = "20220101T084122Z"

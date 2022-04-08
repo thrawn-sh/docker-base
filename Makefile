@@ -20,6 +20,7 @@ push: build
 	@echo "[build] shadowhunt/$(IMAGE):$(SNAPSHOT)"
 	@docker build                               \
 		--build-arg "BUILD_DATE=$(BUILD_DATE)"  \
+		--build-arg "RELEASE=$(RELEASE)"        \
 		--build-arg "SNAPSHOT=$(SNAPSHOT)"      \
 		--compress                              \
 		--force-rm                              \
